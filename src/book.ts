@@ -1,26 +1,57 @@
-// TODO: імпортуй потрібні типи з ./types
-// import type { BookId, Genre, LoanStatus } from "./types";
+import type { BookId, Genre, LoanStatus } from "./types";
+
+export type BookInit = {
+  id: BookId;
+  title: string;
+  author: string;
+  year: number;
+  genre: Genre;
+};
 
 export class Book {
-  // TODO: додай типи до властивостей
-  id;
-  title;
-  author;
-  year;
-  genre;
 
-  status;
-  borrowedBy;
+  public id: BookId;
+  public title: string;
+  public author: string;
+  public year: number;
+  public genre: Genre;
 
-  // TODO: реалізуй конструктор з параметром opts
-  constructor(opts) {}
+  private status: LoanStatus = "available";
+  private borrowedBy: string | null = null;
 
-  // TODO: методи відповідно до ТЗ
-  getStatus() {}
+  constructor(init: BookInit) {
+    this.id = init.id;
+    this.title = init.title;
+    this.author = init.author;
+    this.year = init.year;
+    this.genre = init.genre;
+  }
 
-  markBorrowed(personName) {}
+  getStatus(): LoanStatus {
+    return this.status;
+  }
 
-  markReturned() {}
+  markBorrowed(personName: string): void {
+    if (this.status === "borrowed") {
 
-  getInfo() {}
+      throw new Error(`Already borrowed by ${this.borrowedBy}`);
+    }
+    this.status = "borrowed";
+    this.borrowedBy = personName;
+  }
+
+  markReturned(): void {
+    if (this.status === "available") {
+      throw new Error("Already available");
+    }
+    this.status = "available";
+    this.borrowedBy = null;
+  }
+
+  getInfo(): string {
+    if (this.status === "available") {
+      return `${this.title} — ${this.author} (${this.year}), ${this.genre} [Available]`;
+    }
+    return `${this.title} — ${this.author} (${this.year}), ${this.genre} [Borrowed by ${this.borrowedBy}]`;
+  }
 }
